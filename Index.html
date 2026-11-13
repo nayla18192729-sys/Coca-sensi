@@ -1,1 +1,213 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COCA SENSI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #080808;
+  color: white;
+}
+
+header {
+  background: #bd0000;
+  padding: 22px;
+  text-align: center;
+  font-size: 27px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.container {
+  padding: 22px;
+  max-width: 500px;
+  margin: auto;
+}
+
+.card {
+  background: #171717;
+  border: 1px solid #410000;
+  border-radius: 13px;
+  padding: 18px;
+  margin-top: 18px;
+}
+
+h2 {
+  color: #ff3030;
+  margin-top: 0;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin: 8px 0 15px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: #090909;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: #d00000;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+button:active {
+  background: #850000;
+}
+
+.resultado {
+  line-height: 2;
+  font-size: 17px;
+}
+
+small {
+  color: #aaa;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>COCA SENSI</header>
+
+<div class="container">
+
+  <section id="login" class="card">
+    <h2>ACESSO AO PAINEL</h2>
+    <p>Digite a chave de entrada.</p>
+
+    <input id="senha" type="password" placeholder="Sua chave">
+
+    <button onclick="entrar()">ENTRAR</button>
+    <p id="erro"></p>
+  </section>
+
+  <section id="painel" class="hidden">
+
+    <div class="card">
+      <h2>GERADOR DE SENSIBILIDADE</h2>
+
+      <label>Modelo do celular:</label>
+      <input id="celular" placeholder="Ex: Samsung Galaxy A07">
+
+      <label>Estilo de jogo:</label>
+      <select id="estilo">
+        <option value="capa">Capa / puxada rápida</option>
+        <option value="precisao">Precisão</option>
+        <option value="misto">Misto</option>
+      </select>
+
+      <label>Velocidade da mira:</label>
+      <select id="velocidade">
+        <option value="alta">Alta</option>
+        <option value="media">Média</option>
+        <option value="baixa">Baixa</option>
+      </select>
+
+      <button onclick="gerar()">GERAR CONFIGURAÇÃO</button>
+    </div>
+
+    <div id="resultado" class="card hidden">
+      <h2>SUA CONFIGURAÇÃO</h2>
+      <div id="valores" class="resultado"></div>
+      <button onclick="gerar()">GERAR OUTRA</button>
+    </div>
+
+    <div class="card">
+      <h2>INFORMAÇÕES</h2>
+      <p>COCA SENSI - Todas as funções gratuitas.</p>
+      <small>As configurações são sugestões iniciais. Teste e ajuste no próprio jogo.</small>
+    </div>
+
+  </section>
+</div>
+
+<script>
+function entrar() {
+  const senha = document.getElementById("senha").value;
+
+  if (senha === "CocaSensiNew") {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("painel").classList.remove("hidden");
+  } else {
+    document.getElementById("erro").textContent = "Chave incorreta!";
+  }
+}
+
+function gerar() {
+  const celular = document.getElementById("celular").value.trim();
+  const estilo = document.getElementById("estilo").value;
+  const velocidade = document.getElementById("velocidade").value;
+
+  if (!celular) {
+    alert("Digite o modelo do celular!");
+    return;
+  }
+
+  let base = {
+    capa: [185, 180, 175, 165, 90, 180],
+    precisao: [165, 155, 145, 135, 75, 150],
+    misto: [175, 170, 160, 150, 85, 165]
+  }[estilo];
+
+  let ajuste = {
+    alta: 10,
+    media: 0,
+    baixa: -10
+  }[velocidade];
+
+  let nomes = [
+    "Geral", "Ponto vermelho", "Mira 2x",
+    "Mira 4x", "AWM", "Olhadinha"
+  ];
+
+  let html = "<b>Celular:</b> " + escapar(celular) + "<br>";
+
+  nomes.forEach((nome, i) => {
+    let valor = Math.max(0, Math.min(200, base[i] + ajuste));
+    html += "<b>" + nome + ":</b> " + valor + "<br>";
+  });
+
+  html += "<br><b>DPI:</b> 400 a 480 (sugestão inicial)";
+  html += "<br><b>Botão de tiro:</b> 48% a 55%";
+
+  document.getElementById("valores").innerHTML = html;
+  document.getElementById("resultado").classList.remove("hidden");
+}
+
+function escapar(texto) {
+  return texto.replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
+}
+</script>
+
+</body>
+</html>
+
